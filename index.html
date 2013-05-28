@@ -47,11 +47,14 @@ $(document).ready(function() {
 	hlt.initer.map('map');
 	
 	hlt.initer.layer_ESRI_ARCGIS_IMG();	
-	hlt.initer.set_zoom(23.0704748, 113.3471359);
+	//hlt.initer.set_zoom(23.11, 113.33);
+	hlt.initer.html5_getCurrentPosition();    //html5 geo接口：自动定位
 	
 	hlt.initer.layer_OSM();
 	hlt.initer.layer_YAHOO();
 	hlt.initer.layer_GOOGLE();
+	hlt.initer.layer_NOKIA_HEREMAPS();    //nokia heremaps卫星图都有偏移...
+	//hlt.initer.layer_BING_MAPS();    //有问题(zoom和OSM不匹配导致无法叠加)，暂时不使用
 });
 
 </script>

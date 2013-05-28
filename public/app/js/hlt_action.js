@@ -116,7 +116,45 @@ if(!window.hlt){
             
             hlt.map.addLayer(new OpenLayers.Layer.OSM( layer_name, map_url, layer_option));
 		
-	}
+	};
+	
+
+	
+	/**
+	 * NOKIA HEREMAPS卫星地图
+	 */
+	hlt.initer.layer_NOKIA_HEREMAPS = function(){
+		var layer_name = "Nokia HereMaps Satellite";
+        var layer_option = {
+            	attribution : '<a href="http://heremaps.com/" target="_blank">Nokia HereMaps</a>',
+            	isBaseLayer: true,
+            	tileOptions: {
+            		/**
+            		 * http://dev.openlayers.org/docs/files/OpenLayers/Layer/OSM-js.html
+            		 * http://lists.osgeo.org/pipermail/openlayers-users/2012-July/025754.html
+            		 */            		
+            		crossOriginKeyword: null
+            	}
+            };
+            
+            //var map_url = "http://1.maps.nlp.nokia.com.cn/maptile/2.1/maptile/newest/satellite.day/${z}/${x}/${y}/256/jpg?token=BIl5zlMQF2fUaQLYWcxE&app_id=tGvvOZHNwj1-4guzYwIU";    //heremaps.cn version
+        	var map_url = "http://1.maps.nlp.nokia.com/maptile/2.1/maptile/b6d442adca/satellite.day/${z}/${x}/${y}/256/png8?lg=ENG&app_id=SqE1xcSngCd3m4a1zEGb&token=r0sR1DzqDkS6sDnh902FWQ&xnlp=CL_JSMv2.5.0.8,SID_CC9BB16F-4F25-4771-A5CC-4B24E749957F";
+        
+            hlt.map.addLayer(new OpenLayers.Layer.OSM( layer_name, map_url, layer_option));
+		
+	};
+	
+	//@see http://openlayers.org/dev/examples/bing.html
+	hlt.initer.layer_BING_MAPS = function(){
+		var apiKey = 'At4EmJ8c6tZChaEWy_1LJBNnxgQ-nGo5Tzm3QfXsVuLe_0Wejf5D3kCh_BO0lvZ_';  //change this please. appkey apply website: http://bingmapsportal.com/
+		
+		var hybrid = new OpenLayers.Layer.Bing({
+		    key: apiKey,
+		    type: "Aerial",
+		    name: "Bing Aerial"
+		});
+		hlt.map.addLayer(hybrid);
+	};
 	
 	/**
 	 * 雅虎tw地图卫星图TMS转换工具
@@ -141,6 +179,28 @@ if(!window.hlt){
 			return this.getSrvUrl(x, y) + 'x=' + x + '&y=' + y + '&z=' + z;
 		}
 		
+	};
+	
+	hlt.initer.html5_getCurrentPosition = function(){
+		var handleSuccess = function(position){
+			hlt.initer.set_zoom(position.coords["latitude"], position.coords["longitude"]);
+		};
+		var handleError = function(){
+			hlt.initer.set_zoom();
+		};	
+		if (window.navigator.geolocation) {
+    		window.navigator.geolocation.getCurrentPosition(
+    				handleSuccess, 
+    				handleError, 
+    				{
+    	            	enableHighAccuracy: true,
+    	                timeout: 10000,
+    	                maximumAge: 1000
+    	            }
+    		);
+		} else {
+			handleError();
+		}
 	};
 	
 })(hlt, $);
