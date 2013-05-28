@@ -1,0 +1,36 @@
+@CHARSET "UTF-8";
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+#map {
+    width: 100%;
+    position: relative;
+    height: 100%;
+}
+
+.fill { 
+    height: 100%;
+    box-sizing:border-box;
+}
+
+/*
+http://openlayers.org/dev/examples/bootstrap.html
+*/
+img.olTileImage {
+    max-width: none;
+}
+
+/*
+http://www.mail-archive.com/dev@openlayers.org/msg02762.html
+*/
+.olControlLayerSwitcher label {
+	display: inline;
+}
+
+.olControlAttribution{
+	bottom: 0.5em;
+	background-color: rgb(245, 245, 245);
+}
