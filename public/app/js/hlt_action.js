@@ -255,6 +255,7 @@ if(!window.hlt){
         jsonp.createRequest('http://freegeoip.net/json/', 
         		{}, 
         		function(data){
+        			$('#ip_position').text('ip定位：' + data['ip']);
         			hlt.initer.set_zoom(data["latitude"], data["longitude"]);
         		}
         );

@@ -37,7 +37,12 @@
 <body>
 
 	<div id="opetator" class="operator_ext">
-		<button type="button" class="btn btn-info" id="html5_position">html5定位</button>
+		<span id="operator_main" class="hide">	
+			<button type="button" class="btn btn-info" id="ip_position">ip定位</button>
+			<button type="button" class="btn btn-info" id="html5_position">html5定位</button>
+			<a href="https://github.com/HorseLuke/satellite_map_viewer" target="_blank"><button type="button" class="btn btn-info">源码（请备眼药水）</button></a>		
+		</span>
+		<button type="button" class="btn btn-info" id="operator_show">操作</button>
 	</div>
 	
 	<div class="container-fluid fill">
@@ -86,6 +91,14 @@ $(document).ready(function() {
 	 
 	 $('#html5_position').on('click', function(){
 		 hlt.initer.html5_getCurrentPosition();    //html5 geo接口：自动定位
+	 });
+	 
+	 $('#ip_position').on('click', function(){
+		 hlt.initer.ip_getPosition();
+	 });
+	 
+	 $('#operator_show').on('click', function(){
+		 $('#operator_main').toggle(); 
 	 });
 	 
 });
