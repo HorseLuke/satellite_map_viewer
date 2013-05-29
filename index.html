@@ -25,6 +25,7 @@
 	<!-- 前端个人内容  -->
 	<link rel="stylesheet" href="public/app/css/default.css" type="text/css">
 	<script type="text/javascript" src="public/app/js/hlt.js?v=0"></script>
+	<script type="text/javascript" src="public/app/js/hlt_ui.js?v=0"></script>	
 	<script type="text/javascript" src="public/app/js/hlt_action.js?v=0"></script>
 	
 	<!-- google js  -->
@@ -34,11 +35,34 @@
 </head>
 
 <body>
+
+	<div id="opetator" class="operator_ext">
+		<button type="button" class="btn btn-info" id="html5_position">html5定位</button>
+	</div>
+	
 	<div class="container-fluid fill">
 		<div id="map">
 			载入中......
 		</div>
 	</div>
+	
+	
+	
+	<!-- 提示框开始 -->
+	<div id="dlg_tips" class="modal hide" tabindex="99999" role="dialog" aria-labelledby="dlg_tips_title" aria-hidden="true" data-keyboard="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    	<h3 id="dlg_tips_title">提示</h3>
+		</div>
+		<div class="modal-body" id="dlg_tips_content">
+			消息体
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+		</div>
+	</div>
+	<!-- 提示框结束 -->
+	
 </body>
 <script>
 
@@ -47,14 +71,23 @@ $(document).ready(function() {
 	hlt.initer.map('map');
 	
 	hlt.initer.layer_ESRI_ARCGIS_IMG();	
-	//hlt.initer.set_zoom(23.11, 113.33);
-	hlt.initer.html5_getCurrentPosition();    //html5 geo接口：自动定位
+	hlt.initer.set_zoom(23.11, 113.33, null, 13);
+	hlt.initer.ip_getPosition();
 	
 	hlt.initer.layer_OSM();
 	hlt.initer.layer_YAHOO();
 	hlt.initer.layer_GOOGLE();
 	hlt.initer.layer_NOKIA_HEREMAPS();    //nokia heremaps卫星图都有偏移...
-	//hlt.initer.layer_BING_MAPS();    //有问题(zoom和OSM不匹配导致无法叠加)，暂时不使用
+	/*
+	 * 有问题(zoom和OSM不匹配导致无法叠加)，暂时不使用
+	 * http://trac.osgeo.org/openlayers/ticket/3485 说已经解决，但测试无效
+	 */
+	//hlt.initer.layer_BING_MAPS();
+	 
+	 $('#html5_position').on('click', function(){
+		 hlt.initer.html5_getCurrentPosition();    //html5 geo接口：自动定位
+	 });
+	 
 });
 
 </script>

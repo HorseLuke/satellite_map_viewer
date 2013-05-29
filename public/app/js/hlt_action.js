@@ -9,6 +9,11 @@ if(!window.hlt){
 	 */
 	hlt.map = '1';
 	
+	/**
+	 * @var OpenLayers.Layer.Vector
+	 */
+	hlt.map_vector = '1';
+	
 	hlt.obj_tree["map_pj_gg"] = new OpenLayers.Projection("EPSG:4326");
 	hlt.obj_tree["map_pj_sm"] = new OpenLayers.Projection("EPSG:900913");	
 	
@@ -17,6 +22,7 @@ if(!window.hlt){
 	hlt.initer.map = function(dom_id){
         var options = {
         	projection: hlt.obj_tree["map_pj_sm"],
+        	//displayProjection: hlt.obj_tree["map_pj_gg"],   //http://sautter.com/map/?zoom=4&lat=50.82333&lon=4.59951&layers=0000B00TFFFFFFFF
         	numZoomLevels: 17,    //最大zoom + 1 (因为有一个Zoom 0 -_-||)
             controls: [
                        new OpenLayers.Control.Navigation(),
@@ -28,6 +34,9 @@ if(!window.hlt){
         
         hlt.map = new OpenLayers.Map(dom_id, options);
         //hlt.map.addControl();
+        
+        hlt.map_vector = new OpenLayers.Layer.Vector("Vector Layer", {});
+        hlt.map.addLayer(hlt.map_vector);
 	};
 	
 	hlt.initer.layer_OSM = function(){
@@ -72,17 +81,51 @@ if(!window.hlt){
         
 	};
 	
-	hlt.initer.set_zoom = function(lat, lon){
+	hlt.initer.set_zoom = function(lat, lon, accuracy, zoom){
         lon = lon || 113;
         lat = lat || 22;
+        accuracy = accuracy || 1;
+        zoom = zoom || hlt.map.getZoom();
         
         //transform不能省略，否则会出事
-        hlt.map.setCenter(
-            new OpenLayers.LonLat(lon, lat).transform(
+        var lonlat = new OpenLayers.LonLat(lon, lat).transform(
             	hlt.obj_tree["map_pj_gg"],
                 hlt.map.getProjectionObject()
-            ), 13
-        );
+            );
+        hlt.map.setCenter(lonlat, zoom);
+        
+        var geo_point = new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat);
+        
+        hlt.map_vector.removeAllFeatures();
+        hlt.map_vector.addFeatures([
+                            new OpenLayers.Feature.Vector(
+                            	geo_point,
+                                {},
+                                {
+                                    graphicName: 'cross',
+                                    strokeColor: '#f00',
+                                    strokeWidth: 1,
+                                    strokeOpacity: 1,
+                                    fillOpacity: 0,
+                                    pointRadius: 10
+                                }
+                            ),
+                            new OpenLayers.Feature.Vector(
+                                OpenLayers.Geometry.Polygon.createRegularPolygon(
+                                	geo_point,
+                                    accuracy,
+                                    50,
+                                    0
+                                ),
+                                {},
+                                {
+                                    fillOpacity: 0.1,
+                                    fillColor: '#000',
+                                    strokeColor: '#f00',
+                                    strokeOpacity: 1
+                                }
+                            )
+                        ]);
 	};
 	
 	//http://openlayers.org/blog/2010/07/10/google-maps-v3-for-openlayers/
@@ -151,7 +194,8 @@ if(!window.hlt){
 		var hybrid = new OpenLayers.Layer.Bing({
 		    key: apiKey,
 		    type: "Aerial",
-		    name: "Bing Aerial"
+		    name: "Bing Aerial",
+		    transitionEffect: 'resize'
 		});
 		hlt.map.addLayer(hybrid);
 	};
@@ -183,11 +227,14 @@ if(!window.hlt){
 	
 	hlt.initer.html5_getCurrentPosition = function(){
 		var handleSuccess = function(position){
-			hlt.initer.set_zoom(position.coords["latitude"], position.coords["longitude"]);
+			hlt.initer.set_zoom(position.coords["latitude"], position.coords["longitude"], position.coords['accuracy']);
 		};
-		var handleError = function(){
-			hlt.initer.set_zoom();
-		};	
+		var handleError = function(error){
+			if(error){
+				hlt.ui.showDialog('定位失败', error.message + '(PositionError.code:' + error.code + ')');
+			}
+			//hlt.initer.set_zoom();
+		};
 		if (window.navigator.geolocation) {
     		window.navigator.geolocation.getCurrentPosition(
     				handleSuccess, 
@@ -199,8 +246,18 @@ if(!window.hlt){
     	            }
     		);
 		} else {
-			handleError();
+			hlt.ui.showDialog('定位失败', '当前浏览器不支持html5的地理相关接口，无法定位');
 		}
 	};
+	
+	hlt.initer.ip_getPosition = function(){
+		var jsonp = new OpenLayers.Protocol.Script();
+        jsonp.createRequest('http://freegeoip.net/json/', 
+        		{}, 
+        		function(data){
+        			hlt.initer.set_zoom(data["latitude"], data["longitude"]);
+        		}
+        );
+	}
 	
 })(hlt, $);

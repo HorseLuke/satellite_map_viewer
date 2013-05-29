@@ -3,17 +3,34 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
+    /*
+    overflow-x: hidden; 
+    overflow-y: hidden;
+    */
 }
 
 #map {
     width: 100%;
-    position: relative;
     height: 100%;
+    position: relative;
 }
 
-.fill { 
+.fill {
+    padding-right: 0px;
+    padding-left: 0px;	
     height: 100%;
     box-sizing:border-box;
+}
+
+.operator_ext{
+	position: absolute;
+	top: 5px;
+	right: 20px;
+	z-index: 900;
+}
+
+.clear{
+	clear: both;
 }
 
 /*
