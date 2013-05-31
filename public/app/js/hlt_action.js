@@ -22,16 +22,13 @@ if(!window.hlt){
 	hlt.initer.map = function(dom_id){
         var options = {
         	projection: hlt.obj_tree["map_pj_sm"],
-        	//projection: hlt.obj_tree["map_pj_gg"],
-        	displayProjection: hlt.obj_tree["map_pj_gg"],   //http://sautter.com/map/?zoom=4&lat=50.82333&lon=4.59951&layers=0000B00TFFFFFFFF
+        	//displayProjection: hlt.obj_tree["map_pj_gg"],   //http://sautter.com/map/?zoom=4&lat=50.82333&lon=4.59951&layers=0000B00TFFFFFFFF
         	numZoomLevels: 17,    //最大zoom + 1 (因为有一个Zoom 0 -_-||)
             controls: [
                        new OpenLayers.Control.Navigation(),
                        new OpenLayers.Control.PanZoomBar(),
-                       new OpenLayers.Control.LayerSwitcher({'div':OpenLayers.Util.getElement('layerswitcher')}),
-                       new OpenLayers.Control.Attribution(),
-                       new OpenLayers.Control.ScaleLine(),
-                       new OpenLayers.Control.MousePosition()
+                       new OpenLayers.Control.LayerSwitcher(),
+                       new OpenLayers.Control.Attribution()
                    ]
         };
         
@@ -40,7 +37,6 @@ if(!window.hlt){
         
         hlt.map_vector = new OpenLayers.Layer.Vector("Vector Layer", {});
         hlt.map.addLayer(hlt.map_vector);
-        
 	};
 	
 	hlt.initer.layer_OSM = function(){
@@ -190,98 +186,6 @@ if(!window.hlt){
             hlt.map.addLayer(new OpenLayers.Layer.OSM( layer_name, map_url, layer_option));
 		
 	};
-	
-	/**
-	 * 天地图（WMTS）
-	 * 仅供测试，未找到对齐方法！问题多多！
-	 * DO NOT USE THIS CODE!
-	 * @link http://blog.3snews.net/space.php?uid=46284&do=blog&id=60768
-	 * @link http://blog.csdn.net/arcgis_all/article/details/8848120
-	 */
-	hlt.initer.layer_TIANDITU_STREET = function(){
-	    // If tile matrix identifiers differ from zoom levels (0, 1, 2, ...)
-	    // then they must be explicitly provided.
-	    var matrixIds = new Array(26);
-	    for (var i=0; i<=21; i++) {
-	        matrixIds[i] = {
-	        	identifier: i
-	        };
-	    }
-		
-	    var wmts = new OpenLayers.Layer.WMTS({
-	        name: "Tianditu - main layer",
-	        attribution : '<a href="http://www.tianditu.com/" target="_blank">天地图</a>',
-	        url: "http://t0.tianditu.cn/vec_c/wmts/",
-            layer: "vec",
-            matrixSet: "c",
-	        matrixIds: matrixIds,
-            format: "tiles",
-	        style: "default",
-	        //projection: hlt.obj_tree["map_pj_gg"],
-	        //sphericalMercator: false,
-	        //maxExtent: new OpenLayers.Bounds(-180, -270, 180, 90),
-	        //(left, bottom, right, top)
-	        //maxExtent: new OpenLayers.Bounds(-20037508.34, -30056262.51, 20037508.34, 10018754.17),
-	        maxExtent: new OpenLayers.Bounds(-20037508.34, -29986551.94, 20037508.34, 10088464.74),
-	        isBaseLayer: false,
-	        visibility: false,
-	        opacity: 1,
-	        //zoomOffset: 2,    //isBaseLayer为true时必须
-	        numZoomLevels: 15,
-	        //resolutions: [0.3515625, 0.17578125, 0.087890625, 0.0439453125, 0.02197265625, 0.010986328125, 0.0054931640625, 0.00274658203125, 0.001373291015625, 0.0006866455078125, 0.00034332275390625, 0.000171661376953125, 0.0000858306884765625, 0.00004291534423828125, 0.000021457672119140625, 0.000010728836059570312, 0.000005364418029785156]	        
-	        resolutions: [39135.7585, 19567.87925, 9783.939625, 4891.9698125, 2445.98490625, 1222.992453125, 611.4962265625, 305.74811328125, 152.874056640625, 76.4370283203125, 38.21851416015625, 19.109257080078127, 9.554628540039063, 4.777314270019532, 2.388657135009766, 1.194328567504883, 0.5971642837524415]
-	    });
-	    
-	    /*
-	    wmts.getTileInfo_ori = wmts.getTileInfo;
-	    
-        wmts.getTileInfo = function(loc) {
-            var res = this.getServerResolution();
-            
-            var fx = (loc.lon - this.tileOrigin.lon) / (res * this.tileSize.w);
-            var fy = (this.tileOrigin.lat  - loc.lat) / (res * this.tileSize.h);
-
-            //Math.round((this.topTileFromY - n.top) / f)    90
-            
-            var col = Math.floor(fx);   //无偏差
-            var row = Math.floor(fy);   //有偏差
-            
-            var result = {
-                    col: col, 
-                    row: row,
-                    i: Math.floor((fx - col) * this.tileSize.w),
-                    j: Math.floor((fy - row) * this.tileSize.h)
-                };
-            
-            console.log(res, loc, this.tileOrigin, this.tileSize, result);
-            
-            return result;
-        };
-	    */
-	    
-	    hlt.map.addLayer(wmts);
-	    
-	    var wmts_2 = new OpenLayers.Layer.WMTS({
-	        name: "Tianditu - data layer",
-	        url: "http://t2.tianditu.cn/cva_c/wmts/",
-            layer: "cva",
-            matrixSet: "c",
-	        matrixIds: matrixIds,
-            format: "tiles",
-	        style: "default",
-	        maxExtent: new OpenLayers.Bounds(-20037508.34, -29986551.94, 20037508.34, 10088464.74),
-	        isBaseLayer: false,
-	        visibility: false,
-	        opacity: 1,
-	        //zoomOffset: 2,    //isBaseLayer为true时必须
-	        numZoomLevels: 15,
-	        resolutions: [39135.7585, 19567.87925, 9783.939625, 4891.9698125, 2445.98490625, 1222.992453125, 611.4962265625, 305.74811328125, 152.874056640625, 76.4370283203125, 38.21851416015625, 19.109257080078127, 9.554628540039063, 4.777314270019532, 2.388657135009766, 1.194328567504883, 0.5971642837524415]
-	    });
-	    
-	    hlt.map.addLayer(wmts_2);
-	    
-	};
-	
 	
 	//@see http://openlayers.org/dev/examples/bing.html
 	hlt.initer.layer_BING_MAPS = function(){

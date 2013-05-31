@@ -31,7 +31,6 @@ html, body {
 	clear: both;
 }
 
-
 /*
 http://openlayers.org/dev/examples/bootstrap.html
 */
@@ -39,23 +38,10 @@ img.olTileImage {
     max-width: none;
 }
 
-#layerswitcher{
-	position: absolute;
-	top: 40px;	
-	right: 20px;
-	z-index: 900;
-	background-color: #49afcd;
-	color: #fff;
-	padding: 3px;
-	max-height: 70%;
-	overflow-y: auto;
-}
-
-
 /*
 http://www.mail-archive.com/dev@openlayers.org/msg02762.html
 */
-#layerswitcher label {
+.olControlLayerSwitcher label {
 	display: inline;
 }
 
