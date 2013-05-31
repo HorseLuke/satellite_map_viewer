@@ -38,7 +38,7 @@
 <body>
 
 	<div id="opetator" class="operator_ext">
-		<span id="operator_main" class="hide">	
+		<span id="operator_main" class="hide">
 			<button type="button" class="btn btn-info" id="ip_position">ip定位</button>
 			<button type="button" class="btn btn-info" id="html5_position">html5定位</button>
 			<a href="https://github.com/HorseLuke/satellite_map_viewer" target="_blank"><button type="button" class="btn btn-info">源码（请备眼药水）</button></a>		
@@ -49,6 +49,10 @@
 	</div>
 	
 	<div id="layerswitcher" class="hide">
+		<div>
+			单击的(纬,经)度：
+			<input class="span2" type="text" placeholder="单击地图任一处获取" id="click_latlon_text" value="" />
+		</div>
 	</div>
 		
 			
@@ -113,6 +117,8 @@ $(document).ready(function() {
 	 $('#layerswitcher_btn').on('click', function(){
 		 $('#layerswitcher').toggle();
 	 });
+	 
+	 hlt.map.events.register("click", this, hlt.event.alert_latlon);
 	 
 });
 
