@@ -1,21 +1,21 @@
 <?php
 /**
  * [CHS]
- * mbtiles数据库读取示例
+ * mbtiles数据库读取示例（无header cache control）
  * 使用方法:
  * http://127.0.0.1/mbtiles_satellite/mbtiles_reader.php?db={db}&x={x}&y={y}&z={z}
  * 如果你想直接读取mbtiles数据库(TMS格式)，必须添加参数'y_type=tms' (默认为"osm"):
  * http://127.0.0.1/mbtiles_satellite/mbtiles_reader.php?db={db}&y_type=tms&x={x}&y={y}&z={z}
  * 
  * [ENG]
- * mbtiles map data reader demo
+ * mbtiles map data reader demo (no header cache control)
  * usage with openlayers-osm:
  * http://127.0.0.1/mbtiles_satellite/mbtiles_reader.php?db={db}&x={x}&y={y}&z={z}
  * if you want to read mbtiles map data directly(TMS FORMAT), you have to add paramter 'y_type=tms' (default is "osm"):
  * http://127.0.0.1/mbtiles_satellite/mbtiles_reader.php?db={db}&y_type=tms&x={x}&y={y}&z={z}
  * 
  * @author Horse Luke
- * @version 0.0.1
+ * @version 0.0.1 Build 20130528
  */
 
 date_default_timezone_set('PRC');
