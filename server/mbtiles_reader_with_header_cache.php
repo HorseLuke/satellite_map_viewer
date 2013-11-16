@@ -15,7 +15,7 @@
  * http://127.0.0.1/mbtiles_satellite/mbtiles_reader.php?db={db}&y_type=tms&x={x}&y={y}&z={z}
  * 
  * @author Horse Luke
- * @version 0.0.2 build 20131115 1845
+ * @version 1.0.1 build 20131116 1745
  */
 
 /**
@@ -31,13 +31,13 @@ class project_common_config{
 			'max-age' => 604800,    //存在该tiles时，发送的Cache-Control: max-age=?（默认为1周）
 			'not_exist_max-age' => 259200,    //不存在该tiles时，发送的Cache-Control: max-age=?（默认为3天）（not_exist_strategy为img/blank时有效）
 			'not_exist_strategy' => 'blank',    //不存在该tiles时的策略。“header404”：发送header404；“img”：发送一张自定义无数据的图片；“blank”发送一张透明png图片
-			'not_exist_img_path' => '',   //(__construct()中定义)无数据的图片文件路径（not_exist_strategy为img时有效）
+			'not_exist_img_path' => '',   //(__construct()中定义)无数据的png图片文件路径（not_exist_strategy为img时有效）
 			'reject_robot' => true,    //拒绝robots访问？默认为true
 	);
 
 	public function __construct(){
 		$this->conf['source_dir'] = dirname(__FILE__). '/mbtiles_protected';    //请在这里设置：存放mbtiles的文件夹
-		$this->conf['not_exist_img_path'] = dirname(__FILE__). '/mbtiles_reader_no_data.png'; //请在这里设置：无数据的图片文件路径（not_exist_strategy为img时有效）
+		$this->conf['not_exist_img_path'] = dirname(__FILE__). '/mbtiles_reader_no_data.png'; //请在这里设置：无数据的png图片文件路径（not_exist_strategy为img时有效）
 	}
 	
 	public function get($k, $def=null){
@@ -159,7 +159,7 @@ class project_mbtiles_reader_controller{
 			$stmt->bindColumn('tile_data', $this->tile_container->tile_data, PDO::PARAM_LOB);
 			
 			if($stmt->fetch(PDO::FETCH_BOUND)){
-				header('Content-Type: image/jpeg');    //默认
+				header('Content-Type: image/'. $this->_detect_img_content_type($this->tile_container->tile_data));
 				$this->_header_cache();
 				echo $this->tile_container->tile_data;
 			}else{
@@ -171,6 +171,27 @@ class project_mbtiles_reader_controller{
 			$this->_exit_header_404('unknown_connect_or_fetch_error');			
 		}
 		
+	}
+	
+	/**
+	 * 根据image文件头内容，简单判断content_type发送内容
+	 * @link http://bbs.csdn.net/topics/350068261
+	 * @param unknown_type $content
+	 * @return string
+	 */
+	protected function _detect_img_content_type($content){
+		$header = bin2hex(substr($content, 0, 3));
+		if('ffd8ff' == $header){
+			return 'jpeg';
+		}elseif('89504e' == $header){
+			return 'png';
+		}elseif('474946' == $header){
+			return 'gif';
+		}elseif('49492a' == $header){
+			return 'tif';
+		}
+		
+		return 'jpeg';
 	}
 	
 	/**
@@ -232,7 +253,6 @@ class project_mbtiles_reader_controller{
 			echo project_mbtiles_reader_env::src_blank_png();
 		}
 		
-
 		exit();
 	}
 	
